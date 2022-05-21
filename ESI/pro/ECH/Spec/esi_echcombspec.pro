@@ -81,7 +81,8 @@ pro esi_echcombspec, esi, obj_id1, exp_id, SILENT=silent, LIST=list $
                      , IREF = IREF, npoly = npoly, USE_OLD = use_old $
                      , MXSHIFT = MXSHIFT, DEFRINGE = DEFRINGE $
                      , HIZQSO = HIZQSO, LAM_MASK_MIN = LAM_MASK_MIN1 $
-                     , USE_AVG_SN_WEIGHTS = USE_AVG_SN_WEIGHTS1
+                     , USE_AVG_SN_WEIGHTS = USE_AVG_SN_WEIGHTS1 $
+                     , EQUAL_WEIGHT = EQUAL_WEIGHT
   
  
 ;
@@ -219,7 +220,7 @@ IF n_elements(obj_id1) GT 0 THEN obj_id = obj_id1
       else outfil = 'FSpec/'+strtrim(esi[exp[0]].Obj, 2)+obj_nm[0]+'_ech.fits' 
    endif else BEGIN
       IF KEYWORD_SET(OUTNM)THEN  outfil = 'FSpec/'+outnm+obj_nm[0]+'_ech.fits' $
-     ELSE outfil = 'FSpec/tmp_ech.fits' 
+     ELSE outfil = 'FSpec/tmp_ech.fits'
   ENDELSE
 
   echfspec = { echfspecstrct }
@@ -374,7 +375,8 @@ IF n_elements(obj_id1) GT 0 THEN obj_id = obj_id1
                             , XCORR_SKY = (qq GT 2) $ ;; For orders < order 13 use sky for xcorr
                             , MEAN_SN2 = MEAN_SN2 $
                             , LAM_MASK_MIN = LAM_MASK_MIN, INPUT_WEIGHTS = INPUT_WEIGHTS1 $
-                            , USE_AVG_SN_WEIGHTS = USE_AVG_SN_WEIGHTS
+                            , USE_AVG_SN_WEIGHTS = USE_AVG_SN_WEIGHTS $
+                            , EQUAL_WEIGHT = EQUAL_WEIGHT
              IF KEYWORD_SET(HIZQSO) THEN BEGIN
                 IF qq EQ QQ_MIN THEN mean_SN2_Lya = mean_SN2
              ENDIF

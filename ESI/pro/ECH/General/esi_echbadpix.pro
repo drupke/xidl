@@ -33,6 +33,7 @@
 ; REVISION HISTORY:
 ;   12-Aug-2002 Written by JXP
 ;   03-Feb-2003 Polished (JXP)
+;   08-Nov-2021 Reduced hot pixel region size for mask tracing, David S.N. Rupke
 ;-
 ;------------------------------------------------------------------------------
 
@@ -40,6 +41,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 pro esi_echbadpix, esi, img, NOHOT = NOHOT, HOT_THRESH = HOT_THRESH
+
+; 
+   hotcolhi = 160 ;205
+   hotrowhi = 3960 ;3980
+   
 
 ;
   if  N_params() LT 1  then begin 
@@ -72,14 +78,14 @@ pro esi_echbadpix, esi, img, NOHOT = NOHOT, HOT_THRESH = HOT_THRESH
                      sky_sec = WHERE(ximg LE 60 AND ximg GT 3 AND $
                                      yimg GE 3980 AND yimg LE 4096)
                      djs_iterstat, img[sky_sec], mean = avg_sky
-                     region = (ximg LE 205 AND ximg GT 0 AND $
+                     region = (ximg LE hotcolhi AND ximg GT 0 AND $
                                yimg GE 3800 AND yimg LE 3850) $
-                       OR (ximg LE 205 AND ximg GT 0 AND $
+                       OR (ximg LE hotcolhi AND ximg GT 0 AND $
                            yimg GE 3850 AND yimg LE 3890) $
-                       OR  (ximg LE 205 AND ximg GT 0 AND $
+                       OR  (ximg LE hotcolhi AND ximg GT 0 AND $
                             yimg GE 3890 AND yimg LE 3940) $
-                       OR  (ximg LE 205 AND ximg GT 0 AND $
-                            yimg GE 3940 AND yimg LE 3980)
+                       OR  (ximg LE hotcolhi AND ximg GT 0 AND $
+                            yimg GE 3940 AND yimg LE hotrowhi)
                      img_bad = WHERE(region AND $
                                      img GE (abs(avg_sky) + $
                                              HOT_THRESH*sqrt(abs(avg_sky))) $

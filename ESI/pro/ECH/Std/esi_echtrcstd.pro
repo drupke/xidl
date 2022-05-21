@@ -50,7 +50,8 @@
 pro esi_echtrcstd, esi, slit, NOFND=nofnd, NOSKY=nosky, CHK=chk, MXERR=mxerr $
                    , OFF = off, CUAR = cuar, CBIN = cbin, RBIN = rbin $
                    , FWHM = FWHM, CLOBBER = CLOBBER, BIASFIL=biasfil, $
-                   FLATFIL=flatfil, SEDG_FIL=sedg_fil, NOOSCAN=nooscan
+                   FLATFIL=flatfil, SEDG_FIL=sedg_fil, NOOSCAN=nooscan, $
+                   SUBSCAT=subscat
 
 ;
   if  N_params() LT 2  then begin 

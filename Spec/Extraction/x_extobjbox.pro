@@ -159,15 +159,16 @@ pro x_extobjbox, fx, wv, xyguess, fin_spec, MSK=msk, VAR=var, WVMNX=wvmnx, $
   endif else npix = n_elements(newwv)
 
   ; Check wavelength direction
-  if not keyword_set( REDBLUE ) then begin
-      if (tot_trc[sz[0]/2] LT 0. OR tot_trc[sz[0]/2] GT (sz[1]-1)) then begin
-          mxt = where(tot_trc GT 0. AND tot_trc LT (sz[1]-1))
-          mn = min(abs(sz[0]/2 - mxt),rb_idx)
-          rb_idx = mxt[rb_idx]
-      endif else rb_idx = sz[0]/2
-      if wv[rb_idx,tot_trc[rb_idx]] GT wv[rb_idx + 1, tot_trc[rb_idx + 1]] $
-        then redblue = 1 else redblue = 0
-  endif 
+;  if not keyword_set( REDBLUE ) then begin
+;      if (tot_trc[sz[0]/2] LT 0. OR tot_trc[sz[0]/2] GT (sz[1]-1)) then begin
+;          mxt = where(tot_trc GT 0. AND tot_trc LT (sz[1]-1))
+;          mn = min(abs(sz[0]/2 - mxt),rb_idx)
+;          rb_idx = mxt[rb_idx]
+;      endif else rb_idx = sz[0]/2
+;      if wv[rb_idx,tot_trc[rb_idx]] GT wv[rb_idx + 1, tot_trc[rb_idx + 1]] $
+;        then redblue = 1 else redblue = 0
+;  endif 
+   redblue=0
   
   ; Rebin
   if not keyword_set( SILENT ) then $

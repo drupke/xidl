@@ -11,7 +11,7 @@
 ;  esi = esi_ar(file)
 ;
 ; INPUTS:
-;    [file] - Filename (default: first file in list ./esi_*fits*)
+;    [file] - Filename (default: first file in list ./esi*fits*)
 ;
 ; RETURNS:
 ;    esi -  ESI structure
@@ -33,6 +33,7 @@
 ; REVISION HISTORY:
 ;   13-Nov-2001 Written by JXP
 ;   03-Feb-2003 Polished (JXP)
+;   04-Nov-2021 changed default file from esi_ to esi (DSNR)
 ;-
 ;------------------------------------------------------------------------------
 
@@ -43,7 +44,7 @@ function esi_ar, file
 
 ; Optional Keywords
   if not keyword_set(file) then begin
-      a = findfile('./esi_*fits*', count=count)
+      a = findfile('./esi*fits*', count=count)
       if count EQ 0 then return, -1 
       print, 'Reading from '+a[0]
       file = a[0]

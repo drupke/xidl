@@ -40,7 +40,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 pro esi_echcopyfnd, esi, obj_id, exp, NOCLOB=noclob, OFFSET=offset, $
-                   APER=aper, CHK=chk, CPYIDX=cpyidx
+                   APER=aper, CHK=chk, CPYIDX=cpyidx, aplab=aplab
 
 ;
   if  N_params() LT 2  then begin 
@@ -57,6 +57,7 @@ pro esi_echcopyfnd, esi, obj_id, exp, NOCLOB=noclob, OFFSET=offset, $
       print, 'esi_echcopyfnd: You must set CPYOBJ!'
       return
   endif
+  if not keyword_set(APLAB) then aplab = 'a'
 
 ;  Find all relevant obj images
   indx = where(esi.flg_anly NE 0 AND esi.mode EQ 2 AND $
@@ -69,24 +70,33 @@ pro esi_echcopyfnd, esi, obj_id, exp, NOCLOB=noclob, OFFSET=offset, $
 ;  Exposures
   if not keyword_set(exp) then exp = lindgen(nindx)
 
-; Opening template
-  cpyobj = xmrdfits(esi[cpyidx].obj_fil, 1, STRUCTYP='esiobjstrct', /silent)
-
 ;  Loop
 
   for q=0L,n_elements(exp)-1 do begin
       ;; Flag
       flg_objstr = 0
+      ; Opening template
+      cpyobj = xmrdfits(esi[cpyidx[exp[q]]].obj_fil, 1, STRUCTYP='esiobjstrct', /silent)
       ;; Look for obj file
       objfil = esi[indx[exp[q]]].obj_fil
       ;; REFORDR
-      refordr = esi[cpyidx].refordr
+      refordr = esi[cpyidx[exp[q]]].refordr
       esi[indx[exp[q]]].refordr = refordr
       if strlen(strtrim(objfil,2)) NE 0 and keyword_set(NOCLOB) then begin
           print, 'esi_echcopyfnd: Using Obj structure -- ', objfil
           objstr = xmrdfits(objfil, 1, STRUCTYP='esiobjstrct', /silent)
           nobj = n_elements(objstr)
           flg_objstr = 1
+      endif else if aplab ne 'a' then begin
+         objstr = xmrdfits(objfil, 1, STRUCTYP='esiobjstrct', /silent)
+         ;; Set obj_fil
+         imgstr = esi[indx[exp[q]]].img_root
+         fpos = imgstr.IndexOf('.fits')
+         newobjroot = imgstr.Substring(0,fpos-1)+aplab+imgstr.Substring(fpos,imgstr.strlen()-1)
+         objfil = 'Extract/Obj_'+newobjroot
+         nobj=0L
+         ;; Create objects
+         ;objstr.obj_fil = objfil
       endif else begin
           ;; Set obj_fil
           objfil = 'Extract/Obj_'+esi[indx[exp[q]]].img_root
@@ -112,7 +122,7 @@ pro esi_echcopyfnd, esi, obj_id, exp, NOCLOB=noclob, OFFSET=offset, $
           stop
           continue
       endif
-      objstr.spec2d_fil = imgfil
+      ;objstr.spec2d_fil = imgfil
 
       ;; Setup objstr (default aper to 11)
       if flg_objstr EQ 0 then begin
@@ -121,7 +131,7 @@ pro esi_echcopyfnd, esi, obj_id, exp, NOCLOB=noclob, OFFSET=offset, $
 
           for qq=0L,9 do begin
               objstr[qq].aper[*] = aper
-              objstr[qq].obj_id = 'a'
+              objstr[qq].obj_id = aplab
               objstr[qq].order = qq
 
               ;; xcen

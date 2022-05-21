@@ -61,7 +61,7 @@ pro esi_echskysub, esi, obj_id, exp, CHK = chk, STD = std, ORDRS = ordrs1 $
                    , NOVAC = novac, SKLFIL = sklfil, BORDR = bordr $
                    , AIMG = aimg, USEOLD = useold, SEDG_FIL = sedg_fil $
                    , FITFIL = fitfil, CBIN = cbin, RBIN = rbin, FCHK = fchk $
-                   , LSLITE = LSLITE, RSLITE = RSLITE, NO_SKYLINE=no_skyline
+                   , LSLITE = LSLITE, RSLITE = RSLITE, HwSKYLINE=no_skyline
 
 ;
   if  N_params() LT 2  then begin 

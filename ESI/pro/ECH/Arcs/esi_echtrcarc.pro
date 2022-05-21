@@ -93,7 +93,7 @@ pro esi_echtrcarc, esi, slit, LINLIST=linlist, CHK=chk, AUTO=auto, ORDR=ordr $
                    , NO11KLDG = no11kldg, CUAR = cuar, GUESSARC = guessarc $
                    , KLUDGE = kludge, CBIN = cbin, RBIN = rbin $
                    , LEDG = LEDG, REDG = REDG, PKWDTH=pkwdth, $
-                   SEDG_FIL=sedg_fil
+                   SEDG_FIL=sedg_fil, map_fil=map_fil
 
 ;
   if  N_params() LT 2  then begin 
