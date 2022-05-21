@@ -84,7 +84,8 @@ pro esi_echcalibstd, esi, indx, HSTFIL=hstfil, CHKFIT=chkfit, $
 
   if keyword_set(OTHER) then begin
       if strlen(OTHER) LT 30 then $
-        othfil = getenv('XIDL_DIR')+'/Spec/Flux/OTHER/'+other
+        othfil = getenv('XIDL_DIR')+'/Spec/Flux/OTHER/'+other $
+      else othfil = other
       readcol, othfil, swv, sfx, format='F,F'
       ;; AB Mag?
       if keyword_set(ABMAG) then begin

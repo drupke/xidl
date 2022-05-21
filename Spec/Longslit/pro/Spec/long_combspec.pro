@@ -536,6 +536,11 @@ FOR j = 0L, nimgs-1L DO BEGIN
             poly_ivar_ref[ibad] = 0.0
          ENDIF
       ENDIF
+      inan = where(finite(poly_ivar_ref,/nan) OR finite(poly_ivar_flu,/nan),nnan)
+      if nnan gt 0 then begin
+            poly_ivar_flu[inan] = 0.0
+            poly_ivar_ref[inan] = 0.0
+      endif
       solve_poly_ratio, xvector, (FMAX < sclflux[*, j] > (FMIN)) $
                         , (FMAX < refflux > (FMIN)) $
                         , poly_ivar_flu, poly_ivar_ref $

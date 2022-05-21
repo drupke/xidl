@@ -150,6 +150,7 @@ function x_fitrej, xdat, ydat, func, nord, SIG=sig, REG=reg, $
 ;  First Fit
   fit = x_fit(xfit, yfit, SIG=sigfit, IVAR=ivarfit, FITSTR=fitstr, /NONRM,$
              FLG_BSP=flg_bsp, SILENT=silent)
+  print,*fitstr.ffit
   if fit[0] EQ -1 then return, -1
 
   iter = 0L

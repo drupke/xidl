@@ -123,7 +123,7 @@ pro esi_echsensstd, std_fil, CLOBBER=clobber, CONDITIONS=conditions, $
 
   ;; Get sensitivity function
   cal_fil = getenv('XIDL_DIR')+$
-            '/Spec/Longslit/calib/standards/calspec/'+calibfil
+            '/Spec/Longslit/calib/standards/calspec_old/'+calibfil
   std = xmrdfits(cal_fil,1)
   std_wv = std.wavelength
   c = x_constants()

@@ -1,4 +1,4 @@
-;+ 
+ ;+ 
 ; NAME:
 ; esi_echextobj   
 ;     Version 1.1
@@ -75,7 +75,7 @@ pro esi_echextobj, esi, obj_id, exp, DEBUG = debug, CHK = chk $
                    , LSLITE = LSLITE, RSLITE = RSLITE $
                    , OBJ_NM = OBJ_NM, OUTGAU = OUTGAU, SN_GAUSS = SN_GAUSS $
                    , DEFRINGE = DEFRINGE, FRINGEMASK = FRINGEMASK $
-                   , NOFRINGEMASK = NOFRINGEMASK
+                   , NOFRINGEMASK = NOFRINGEMASK, LIST=LIST, REBINC=REBINC
 
   print, systime()
 
@@ -123,6 +123,9 @@ pro esi_echextobj, esi, obj_id, exp, DEBUG = debug, CHK = chk $
   IF NOT KEYWORD_SET(MAXFWHM) THEN MAXFWHM = 1.5D/plate_scale
   ;; Minimum FWHM is 1 pixel
   IF NOT KEYWORD_SET(MINFWHM) THEN MINFWHM = replicate(2.0D, 10L)
+  ;; rebin using a C program
+  IF NOT KEYWORD_SET(REBINC) THEN REBINC = 0b else REBINC=1b
+
     
   ;; make sure orders is sorted
   nord = n_elements(ordrs)
@@ -138,22 +141,25 @@ pro esi_echextobj, esi, obj_id, exp, DEBUG = debug, CHK = chk $
   IF NOT KEYWORD_SET(ABSMINGAU) THEN ABSMINGAU = 1.0d
   ;;  Find all relevant obj
   if not keyword_set(STD) then begin
-      indx = where(esi.flg_anly NE 0 AND esi.mode EQ 2 AND $
-                   esi.rbin EQ rbin AND esi.cbin EQ cbin AND $
-                   esi.obj_id EQ obj_id AND strtrim(esi.type,2) EQ 'OBJ', nindx)
+   indx = where(esi.flg_anly NE 0 AND esi.mode EQ 2 AND $
+      esi.rbin EQ rbin AND esi.cbin EQ cbin AND $
+      esi.obj_id EQ obj_id AND strtrim(esi.type,2) EQ 'OBJ', nindx)
       if nindx EQ 0 then begin
-          print, 'esi_echextobj: No images to find obj for!', obj_id
-          return
+         print, 'esi_echextobj: No images to find obj for!', obj_id
+         return
       endif
-  endif else begin  ; STD star
+   endif else begin  ; STD star
       indx = obj_id[0]
       nindx = 1L
       BOXCAR = 1L
       box_rad = 40L
-  endelse
+   endelse
 
 ;  Exposures
   if n_elements(exp) EQ 0 then exp = lindgen(nindx)
+
+  if keyword_set(LIST) then $
+     readcol, list, files, FORMAT='A'
 
 ;  Wavelength solution (put in a file)
   cdelt = 0.00001447624d
@@ -245,7 +251,8 @@ pro esi_echextobj, esi, obj_id, exp, DEBUG = debug, CHK = chk $
       DEFGAU = (3.0d < ABSMAXGAU) > ABSMINGAU 
       ;;;;;;;;;;;;;;
       ;; Open Obj file
-      objfil = esi[indx[exp[q]]].obj_fil
+      if keyword_set(list) then objfil=files[q] $
+      else objfil = esi[indx[exp[q]]].obj_fil
       if x_chkfil(objfil+'*') EQ 0 then begin
           print, 'esi_echextobj: No Obj file! ', objfil, ' Skipping...'
           continue
@@ -685,14 +692,14 @@ pro esi_echextobj, esi, obj_id, exp, DEBUG = debug, CHK = chk $
                             , CRVAL1 = all_crval1[qq], CDELT = cdelt $
                             , NPIX = round(5000./rbin) $
                             , TOT_TRC = objstr[sci2].trace[0:ny-1L]-mincol $
-                            , /REBINC, READNO = esi[indx[exp[q]]].readno $
+                            , REBINC=REBINC, READNO = esi[indx[exp[q]]].readno $
                             , REDBLUE = 0L, PROF_LIM = PROF_LIM $
                             , CHK = chk, DEBUG = debug, /USE_INPUT_VAR
                ;; PROF_LIM added by JFH 06/08. This explicitly masks
                ;; any region for which the fraction of good pixels 
                ;; on the 2-d object profile frac_mask < PROF_LIM =
                ;; 0.40
-            ENDIF ELSE BEGIN ;; BOXCAR EXTRACTION
+            ENDIF ELSE BEGIN ;;  BOXCAR EXTRACTION
                 tvar = transpose(var[mincol:maxcol, *])
                 x_extobjbox, timg-tsky, tarc, VAR = tvar $
                              , [objstr[sci2].xcen, objstr[sci2].ycen-mincol] $
@@ -702,7 +709,7 @@ pro esi_echextobj, esi, obj_id, exp, DEBUG = debug, CHK = chk $
                              , CRVAL1 = all_crval1[qq], CDELT = cdelt $
                              , NPIX = 5000L, REJ_CR = REJ_CR $
                              , TOT_TRC = objstr[sci2].trace[0:ny-1L]-mincol $
-                             , REJSIG = rejsig, /REBINC, RADIUS = box_rad $
+                             , REJSIG = rejsig, REBINC=REBINC, RADIUS = box_rad $
                              , NOCRREJ = NOCRREJ, SKY=tsky $
                              , BKAPER = svaper, CHK = chk 
                 ;; Save the aperture

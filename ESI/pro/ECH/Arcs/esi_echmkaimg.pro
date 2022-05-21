@@ -48,7 +48,7 @@
 
 pro esi_echmkaimg, esi, slit, TRCSTR=trcstr, NX=nx, NY=ny, CHK=chk,$
                    CUAR=cuar, CBIN=cbin, RBIN=rbin, OUTFIL=outfil, $
-                   SEDG_FIL=sedg_fil
+                   SEDG_FIL=sedg_fil, map_fil=map_fil
 
 ;
   if  N_params() LT 2  then begin 
@@ -128,7 +128,7 @@ pro esi_echmkaimg, esi, slit, TRCSTR=trcstr, NX=nx, NY=ny, CHK=chk,$
       fitstr.flg_rej = 1
 
       ;; Setup Arrays
-      ycen = lindgen(sz_trc[0]) # replicate(1., ntrc) 
+      ycen = lindgen(sz_trc[0]) # replicate(1., ntrc)
       gd_cen = where(trcstr.xerr LE 0.2, ngd)  ;; Changed from 0.1
       xydat = dblarr(ngd,2)
       xydat[*,0] = trcstr.xcen[gd_cen]
@@ -182,6 +182,7 @@ pro esi_echmkaimg, esi, slit, TRCSTR=trcstr, NX=nx, NY=ny, CHK=chk,$
       ;; Into 'Big Image'
       fin_arc[trcstr.xoff:trcstr.xoff+sz_subimg[1]-1,*] = $
         fin_arc[trcstr.xoff:trcstr.xoff+sz_subimg[1]-1,*] * temporary(arc_img)
+      
   endfor
 
   if not keyword_set( SILENT ) then $

@@ -70,7 +70,8 @@ pro esi_echcoaddfin, esi, obj_id, CRVAL1=crval1, CDELT=cdelt, NPIX=npix $
   endif
 
 ; Grab exposure
-  if keyword_set( ESI ) and not keyword_set( SPECFIL ) then begin
+;  if keyword_set( ESI ) and not keyword_set( SPECFIL ) then begin
+   if keyword_set( ESI ) then begin
       if not keyword_set( STD ) then begin
           allexp = where(esi.type EQ 'OBJ' AND esi.flg_anly NE 0 AND $
                          esi.mode EQ 2 AND esi.obj_id EQ obj_id, nexp)
@@ -78,7 +79,8 @@ pro esi_echcoaddfin, esi, obj_id, CRVAL1=crval1, CDELT=cdelt, NPIX=npix $
           allexp = obj_id[0]
           nexp = 1
       endelse
-      specfil = 'FSpec/'+strtrim(esi[allexp[0]].Obj,2)+obj_nm+'_ech.fits'
+      if not keyword_set( SPECFIL ) then $
+         specfil = 'FSpec/'+strtrim(esi[allexp[0]].Obj,2)+obj_nm+'_ech.fits'
   endif else begin
       if keyword_set(obj_id) then allexp = obj_id[0] else allexp = 0
   endelse
@@ -139,10 +141,11 @@ pro esi_echcoaddfin, esi, obj_id, CRVAL1=crval1, CDELT=cdelt, NPIX=npix $
       ENDCASE
   ENDELSE
 
-  sky_flux = 1
-  IF KEYWORD_SET(SKY_FLUX) THEN $
-     spec2d = esi_sky_flux_calib(spec2d_in, bad, ordrs = ordrs) $
-  ELSE spec2d = spec2d_in 
+;  sky_flux = 1
+;  IF KEYWORD_SET(SKY_FLUX) THEN $
+;     spec2d = esi_sky_flux_calib(spec2d_in, bad, ordrs = ordrs) $
+;  ELSE spec2d = spec2d_in 
+  spec2d = spec2d_in
      
   
   tot_wave = 10^(alog10(CRVAL1) + dindgen(npix)*cdelt)

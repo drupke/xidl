@@ -264,7 +264,8 @@ endif
       tmp2 = objstruct[0]
       dum = {junk:0.0}
       struct_assign, dum, tmp2
-      proto = struct_addtags(tmp, tmp2)
+      ;proto = struct_addtags(tmp, tmp2)
+      proto = tmp
       objstr = replicate(proto, nobj*10)
       objstr.img_fil = ' '
       objstr.UT = ' '
